@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient} from '@angular/common/http';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-post-list',
@@ -8,15 +9,36 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 })
 export class PostListComponent implements OnInit {
   posts: any[];
+  form: FormGroup;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private fb: FormBuilder) {
+    this.form = this.fb.group({
+      name: '',
+      email: ''
+    });
+  }
 
   ngOnInit() {
+    this.loadPost();
+  }
+
+  loadPost() {
+    this.posts = [];
     this.httpClient
     .get('https://jsonplaceholder.typicode.com/posts')
     .subscribe(result => {
       this.posts = result as any[];
+    });
+  }
 
+  addPost() {
+    const newPost = this.form.value;
+    this.httpClient
+    .get('https://jsonplaceholder.typicode.com/posts')
+    .subscribe(result => {
+      this.posts = result as any[];
+      alert('Add Post Success !')
+      this.loadPost();
     });
   }
 
